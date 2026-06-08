@@ -1,68 +1,79 @@
-# Deploy BERT for Sentiment Analsysi with FastAPI
+# NLP Sentiment Analysis — CI/CD Pipeline
 
-Deploy a pre-trained BERT model for Sentiment Analysis as a REST API using FastAPI
+![CI/CD](https://github.com/Raniaafath/nlp-sentiment-cicd-pipeline/actions/workflows/ci.yml/badge.svg)
 
-## Demo
+Production-grade CI/CD pipeline wrapping a BERT-based sentiment analysis API.
+Built to demonstrate DevOps best practices: containerization, automated testing, and security scanning.
 
-The model is trained to classify sentiment (negative, neutral, and positive) on a custom dataset from app reviews on Google Play. Here's a sample request to the API:
+## Architecture
 
-```bash
-http POST http://127.0.0.1:8000/predict text="Good basic lists, i would like to create more lists, but the annual fee for unlimited lists is too out there"
-```
+Code Push → GitHub Actions → Lint → Test → Docker Build → Security Scan
 
-The response you'll get looks something like this:
+## Tech Stack
 
-```js
-{
-    "confidence": 0.9999083280563354,
-    "probabilities": {
-        "negative": 3.563107020454481e-05,
-        "neutral": 0.9999083280563354,
-        "positive": 5.596495248028077e-05
-    },
-    "sentiment": "neutral"
-}
-```
+| Layer | Technology |
+|---|---|
+| API | FastAPI + Python 3.8 |
+| ML Model | BERT (HuggingFace Transformers) |
+| Container | Docker |
+| CI/CD | GitHub Actions |
+| Security | Trivy vulnerability scan |
+| Testing | pytest + unittest.mock |
 
-You can also [read the complete tutorial here](https://www.curiousily.com/posts/deploy-bert-for-sentiment-analysis-as-rest-api-using-pytorch-transformers-by-hugging-face-and-fastapi/)
+## Pipeline Stages
 
-## Installation
+1. **Lint** — flake8 checks code style and quality
+2. **Test** — pytest runs automated tests with mocked BERT model
+3. **Build** — Docker image built and validated
+4. **Security Scan** — Trivy scans image for vulnerabilities
 
-Clone this repo:
+## Quick Start
 
-```sh
-git clone git@github.com:curiousily/Deploy-BERT-for-Sentiment-Analysis-with-FastAPI.git
-cd Deploy-BERT-for-Sentiment-Analysis-with-FastAPI
-```
+    git clone https://github.com/Raniaafath/nlp-sentiment-cicd-pipeline.git
+    cd nlp-sentiment-cicd-pipeline
+    docker build -t nlp-sentiment-api .
+    docker run -p 8000:8000 nlp-sentiment-api
 
-Install the dependencies:
+## Run Tests
 
-```sh
-pipenv install --dev
-```
+    pip install -r requirements.txt
+    pytest tests/ -v
 
-Download the pre-trained model:
+## API Usage
 
-```sh
-bin/download_model
-```
+POST /predict
 
-## Test the setup
+    curl -X POST http://localhost:8000/predict \
+      -H "Content-Type: application/json" \
+      -d '{"text": "I love this product!"}'
 
-Start the HTTP server:
+Response:
 
-```sh
-bin/start_server
-```
+    {
+      "sentiment": "positive",
+      "confidence": 0.99,
+      "probabilities": {
+        "positive": 0.99,
+        "neutral": 0.005,
+        "negative": 0.005
+      }
+    }
 
-Send a test request:
+## Project Structure
 
-```sh
-bin/test_request
-```
+    nlp-sentiment-cicd-pipeline/
+    ├── sentiment_analyzer/
+    │   ├── api.py
+    │   └── classifier/
+    │       ├── model.py
+    │       └── sentiment_classifier.py
+    ├── tests/
+    │   └── test_api.py
+    ├── .github/
+    │   └── workflows/
+    │       └── ci.yml
+    ├── Dockerfile
+    └── requirements.txt
 
 ## License
-
 MIT
-# trigger CI
-# trigger CI
